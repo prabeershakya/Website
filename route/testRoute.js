@@ -7,5 +7,4 @@ express.post("/createUser", createUser);
 express.put("/updateUser/:id", updateUser);
 express.delete("/deleteUser/:id", deleteUser);
 
-
 module.exports = express;
