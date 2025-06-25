@@ -22,17 +22,30 @@ const User = sequelize.define(
             isEmail: true,
             },
         },
-        // Image: DataTypes.STRING,
-        // allowNull:false,
+        image: {
+        type: DataTypes.STRING,
+        allowNull:true,
+        },
+        
     password: {
         type: DataTypes.STRING,
         allowNull:false,
         },
+    
+        role:{
+        type: DataTypes.ENUM('user', 'admin'),
+        defaultValue: 'user',
+        allowNull : false,
+    }   
     },
+
     {
         tableName: "users",
         timestamps: true,
     }
 );
+
+// const Address = require("./address");
+// Address.hasMany
 
 module.exports = {User}

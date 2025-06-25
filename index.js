@@ -1,11 +1,22 @@
 const express = require('express');
 const { sequelize, connectDB } = require('./db/database');
 require('dotenv').config();
+const cors = require ('cors');
+
 
 const app = express();
-app.use(express.json());
 
+
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:5174'
+}));
+
+app.use(express.json());
 const PORT = process.env.PORT || 3000; 
+
+
+app.use('/uploads',express.static('uploads'));
 app.get('/', (req, res) => {
     res.send('Backend chali');
 });
