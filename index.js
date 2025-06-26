@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:5174'
+    origin: 'http://localhost:5173'
 }));
 
 app.use(express.json());
@@ -41,7 +41,7 @@ app.use((req, res) => {
 const startServer = async () => {
     try {
         await connectDB();
-        await sequelize.sync();
+        await sequelize.sync({ alter: true });
         app.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`);
         });

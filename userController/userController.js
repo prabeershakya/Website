@@ -4,32 +4,35 @@ require("dotenv").config();
 const jwt = require ('jsonwebtoken');
 
 
-const createUsers = async (req, res) => {
-  console.log(  req.files?.length ? req.files[0].path : null)
-  try {
-    const { username, email, password } = req.body;
-    const image = req.files?.length ? req.files[0].path : null;
-    const salt = await bcrypt.genSalt(10);
-const hashedPassword = await bcrypt.hash(password,salt);
-const newuser = await User.create({
-  username:username,
-  email,
-  password:hashedPassword,
-});
-res.status(201).json({ success:true,newuser:newuser});
-  } catch (error) {
-    res.status(400).json({ error: error.message }); // optional: send just error message
-  }
-}
-
-const getAllUsers = async (req,res) => {
-  console.log(req.headers.authorization)
+  const createUsers = async (req, res) => {
+    console.log(  req.files?.length ? req.files[0].path : null)
     try {
-        const users = await User.findAll({attributes:{exclude:['password','email']}});
-        res.json({ success: true,users: users});
+      const { username, email, password } = req.body;
+    //  const image = req.files?.[0]?.path || null;
+      const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password,salt);
+  const newuser = await User.create({
+    username:username,
+    email,
+    password:hashedPassword,
+  });
+  res.status(201).json({ success:true,newuser:newuser});
     } catch (error) {
-        res.status(500).json({ error:"Error fetching users"});
+      res.status(400).json({ error: error.message }); // optional: send just error message
     }
+  }
+
+const getAllUsers = async (req, res) => {
+  console.log("Authorization header:", req.headers.authorization);
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ['password'] },
+    });
+    res.json({ success: true, users: users });
+  } catch (error) {
+    console.error("Error fetching users:", error); // 👈 this will show the real error in terminal
+    res.status(500).json({ error: "Error fetching users" });
+  }
 };
 
 const find = async (req,res) => {
@@ -99,11 +102,12 @@ const loginUser = async (req,res) => {
   console.log(req.body)
 try {
 const { email, password } = req.body;
-const user = await User. findOne({ where: { email } });
+const user = await User.findOne({ where: { email } });
 if (!user) {
 return res.status (404).json({ success: false, message: 'User not found' });
 }
 const isMatch = await bcrypt.compare(password,user.password);
+
 if(!isMatch) {
   return res.status(401).json({ success : false,message: 'Invalid credentials'});
 }
@@ -124,6 +128,8 @@ return res.status (200).json({
   res.status(400).json({ error:error});
 }
 };
+
+
 const resetUser =(req,res) => {
   res.send('user reset')
 }
